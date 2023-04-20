@@ -18,6 +18,15 @@ __global__ void mCSRxVecPar(int* rowptr, int* col, float* data, float* vin, floa
     // delne produkte piši v __shared pomnilnik ne v globalni 
     // nato začni redukcijo in določi koliko niti dela redukcijo (more bit manjše kot število niti v BLOKU ker želiš delat v __shared pomnilniku)
 
+    //get global id 
+    int gid = blockDim.x * blockIdx.x + threadIdx.x;
+    //get local id
+    int lid = threadIdx.x;
+
+    //allocate shared memory for partial products (kok jih more bit? check this)
+    __shared__ float partialProducts[THREADS_PER_BLOCK];
+
+    
 }//TODO to je za nalogo 7 
 
 __global__ void mCSRxVec(int *rowptr, int *col, float *data, float *vin, float *vout, int rows)
@@ -159,6 +168,8 @@ int main(int argc, char *argv[])
 
     // CSRPar execute
     cudaEventRecord(start);
+    // TODO tega moraš ti naredi ampak sam kernel napišeš ostalo pa pustiš pr mir??
+    // prilagodi še gridsize_CDSpar da bo vredu delal 
     for (repeat = 0; repeat < REPEAT; repeat++)
     {
         mCSRxVecPar << <gridsize_CSRpar, blocksize >> > (d_mCSRrowptr, d_mCSRcol, d_mCSRdata, d_vecIn, d_vecOut, h_mCSR.num_rows);
